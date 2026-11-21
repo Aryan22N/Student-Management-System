@@ -96,7 +96,7 @@ export const StudentDirectoryScreen: React.FC<StudentDirectoryProps> = ({ naviga
   return (
     <ScreenContainer
       title="Student Directory"
-      subtitle="Institutional student registry, dossiers, and academic records"
+      subtitle="Institutional student registry, student profiles, and academic records"
       breadcrumbs={[
         { label: 'FACULTY' },
         { label: 'STUDENT DIRECTORY' },
@@ -162,80 +162,80 @@ export const StudentDirectoryScreen: React.FC<StudentDirectoryProps> = ({ naviga
         ) : (
           <FlatList
             data={filteredStudents}
-              keyExtractor = {(item: any) => item.id.toString()}
-        renderItem={({ item }: { item: any }) => (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => navigation.navigate('StudentDetails', { studentId: item.id })}
-            style={Platform.select({ web: { cursor: 'pointer' } as any })}
-          >
-            <Card style={styles.studentCard}>
-              <View style={styles.cardRow}>
-                <View
-                  style={[
-                    styles.avatarCircle,
-                    { backgroundColor: isDark ? 'rgba(15, 157, 88, 0.2)' : '#E6F4EA' },
-                  ]}
-                >
-                  <Text style={[styles.avatarText, { color: '#0F9D58' }]}>
-                    {item.firstName.charAt(0)}
-                    {item.lastName.charAt(0)}
-                  </Text>
-                </View>
+            keyExtractor={(item: any) => item.id.toString()}
+            renderItem={({ item }: { item: any }) => (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('StudentDetails', { studentId: item.id })}
+                style={Platform.select({ web: { cursor: 'pointer' } as any })}
+              >
+                <Card style={styles.studentCard}>
+                  <View style={styles.cardRow}>
+                    <View
+                      style={[
+                        styles.avatarCircle,
+                        { backgroundColor: isDark ? 'rgba(15, 157, 88, 0.2)' : '#E6F4EA' },
+                      ]}
+                    >
+                      <Text style={[styles.avatarText, { color: '#0F9D58' }]}>
+                        {item.firstName.charAt(0)}
+                        {item.lastName.charAt(0)}
+                      </Text>
+                    </View>
 
-                <View style={styles.infoCol}>
-                  <View style={styles.nameRow}>
-                    <Text style={[styles.studentName, { color: theme.text }]}>
-                      {item.firstName} {item.lastName}
-                    </Text>
-                    <Badge label={item.gradeLevel} variant="neutral" size="sm" style={{ marginLeft: 6 }} />
+                    <View style={styles.infoCol}>
+                      <View style={styles.nameRow}>
+                        <Text style={[styles.studentName, { color: theme.text }]}>
+                          {item.firstName} {item.lastName}
+                        </Text>
+                        <Badge label={item.gradeLevel} variant="neutral" size="sm" style={{ marginLeft: 6 }} />
+                      </View>
+                      <Text style={styles.studentMeta}>
+                        ID: <Text style={{ color: theme.text, fontWeight: '600' }}>{item.studentIdNumber}</Text> • {item.email}
+                      </Text>
+                    </View>
+
+                    <View style={styles.pointsCol}>
+                      <Badge
+                        label={`${item.totalPoints} pts`}
+                        variant="primary"
+                        size="md"
+                      />
+                      <Icon
+                        name="ChevronRight"
+                        size={16}
+                        color="#5F6368"
+                        style={{ marginTop: 4, alignSelf: 'center' }}
+                      />
+                    </View>
                   </View>
-                  <Text style={styles.studentMeta}>
-                    ID: <Text style={{ color: theme.text, fontWeight: '600' }}>{item.studentIdNumber}</Text> • {item.email}
-                  </Text>
+                </Card>
+              </TouchableOpacity>
+            )}
+            contentContainerStyle={styles.listContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefreshing}
+                onRefresh={onRefresh}
+                tintColor="#0F9D58"
+              />
+            }
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.3}
+            ListEmptyComponent={
+              <EmptyState
+                icon="people-outline"
+                title="No students found"
+                subtitle="Try searching with a different name or student ID number."
+              />
+            }
+            ListFooterComponent={
+              isLoadingMore ? (
+                <View style={styles.footerLoader}>
+                  <ActivityIndicator size="small" color="#0F9D58" />
                 </View>
-
-                <View style={styles.pointsCol}>
-                  <Badge
-                    label={`${item.totalPoints} pts`}
-                    variant="primary"
-                    size="md"
-                  />
-                  <Icon
-                    name="ChevronRight"
-                    size={16}
-                    color="#5F6368"
-                    style={{ marginTop: 4, alignSelf: 'center' }}
-                  />
-                </View>
-              </View>
-            </Card>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={onRefresh}
-            tintColor="#0F9D58"
-          />
-        }
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.3}
-        ListEmptyComponent={
-          <EmptyState
-            icon="people-outline"
-            title="No students found"
-            subtitle="Try searching with a different name or student ID number."
-          />
-        }
-        ListFooterComponent={
-          isLoadingMore ? (
-            <View style={styles.footerLoader}>
-              <ActivityIndicator size="small" color="#0F9D58" />
-            </View>
-          ) : null
-        }
+              ) : null
+            }
           />
         )}
       </View>

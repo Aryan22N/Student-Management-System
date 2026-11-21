@@ -1,11 +1,14 @@
+import { Platform } from 'react-native';
 import { LinkingOptions, getStateFromPath } from '@react-navigation/native';
 
 const prefixes = [
-  typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8081',
+  Platform.OS === 'web' && typeof window !== 'undefined' && window?.location?.origin
+    ? window.location.origin
+    : 'http://localhost:8081',
   'http://localhost:8081',
   'http://localhost',
-  '/',
   'sms://',
+  '/',
 ];
 
 const documentTitle = {
@@ -18,11 +21,11 @@ const documentTitle = {
       AwardPoints: 'Award Points — Academia SMS',
       Leaderboard: 'Rank Standings — Academia SMS',
       Settings: 'Preferences — Academia SMS',
-      StudentDetails: 'Student Dossier — Academia SMS',
+      StudentDetails: 'Student Profile — Academia SMS',
       ClassDetails: 'Classroom Management — Academia SMS',
       StudentDashboard: 'Student Workspace — Academia SMS',
       PointHistory: 'Merit Ledger — Academia SMS',
-      StudentProfile: 'Student Dossier — Academia SMS',
+      StudentProfile: 'Student Profile — Academia SMS',
     };
     return titles[route?.name || ''] || 'Academia — Student Management System';
   },
@@ -36,13 +39,12 @@ export const authLinking: LinkingOptions<any> = {
       Register: 'register',
     },
   },
-  documentTitle,
   getStateFromPath: (path, options) => {
     let clean = path.split('?')[0].replace(/\/+$/, '') || '/';
     if (clean === '/login' || clean === '/') clean = '';
     return getStateFromPath(clean, options);
   },
-};
+} as any;
 
 export const teacherLinking: LinkingOptions<any> = {
   prefixes,
@@ -50,7 +52,7 @@ export const teacherLinking: LinkingOptions<any> = {
     screens: {
       TeacherTabs: {
         path: '',
-        initialRouteName: 'TeacherDashboard',
+        initialRouteName: 'TeacherDashboard' as any,
         screens: {
           TeacherDashboard: 'faculty-dashboard',
           StudentDirectory: 'student-directory',
@@ -63,7 +65,6 @@ export const teacherLinking: LinkingOptions<any> = {
       ClassDetails: 'class-details/:classId',
     },
   },
-  documentTitle,
   getStateFromPath: (path, options) => {
     let clean = path.split('?')[0].replace(/\/+$/, '') || '/';
     const query = path.includes('?') ? '?' + path.split('?')[1] : '';
@@ -80,7 +81,7 @@ export const teacherLinking: LinkingOptions<any> = {
     }
     return getStateFromPath(clean + query, options);
   },
-};
+} as any;
 
 export const studentLinking: LinkingOptions<any> = {
   prefixes,
@@ -93,7 +94,6 @@ export const studentLinking: LinkingOptions<any> = {
       Settings: 'preferences',
     },
   },
-  documentTitle,
   getStateFromPath: (path, options) => {
     let clean = path.split('?')[0].replace(/\/+$/, '') || '/';
     const query = path.includes('?') ? '?' + path.split('?')[1] : '';
@@ -110,7 +110,7 @@ export const studentLinking: LinkingOptions<any> = {
     }
     return getStateFromPath(clean + query, options);
   },
-};
+} as any;
 
 export const getLinkingForRole = (
   isAuthenticated: boolean,

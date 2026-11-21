@@ -1,6 +1,6 @@
 # Student Management System (SMS)
 
-An end-to-end academic merit, evaluation, and student management platform featuring a **Spring Boot 3.x** RESTful backend, **PostgreSQL** relational database persistence, and a **React Native (Expo SDK 51)** cross-platform mobile and web application powered by **Redux Toolkit** and the **Google Classroom** design system.
+An end-to-end academic merit, evaluation, and student management platform featuring a **Spring Boot 3.x** RESTful backend, **PostgreSQL** relational database persistence, and a **React Native (Expo SDK 58)** cross-platform mobile and web application powered by **Redux Toolkit** and the **Google Classroom** design system.
 
 ---
 
@@ -53,7 +53,7 @@ The **Student Management System** is designed to manage student academic perform
 - **Build Tool**: Apache Maven 3.9+
 
 ### Frontend (Mobile & Web)
-- **Framework**: React Native 0.74 with Expo SDK 51
+- **Framework**: React Native 0.88 with Expo SDK 58
 - **Language**: TypeScript 5.3+
 - **State Management**: Redux Toolkit (`@reduxjs/toolkit` & `react-redux`)
 - **Navigation & Routing**: React Navigation 6 (Native Stack, Bottom Tabs, Browser Deep Linking)

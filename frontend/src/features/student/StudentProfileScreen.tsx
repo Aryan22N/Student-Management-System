@@ -31,11 +31,11 @@ export const StudentProfileScreen: React.FC = () => {
 
   return (
     <ScreenContainer
-      title="Student Dossier"
+      title="Student Profile"
       subtitle="Institutional student credential and academic standing"
       breadcrumbs={[
         { label: 'STUDENT' },
-        { label: 'DOSSIER' },
+        { label: 'PROFILE' },
       ]}
       activeRoute="StudentProfile"
       maxWidth={720}
@@ -48,7 +48,7 @@ export const StudentProfileScreen: React.FC = () => {
         <Card style={styles.headerGreetingCard}>
           <View style={styles.greetingHeaderRow}>
             <Text style={[styles.greetingHeaderText, { color: theme.text }]}>
-              Academic Dossier • {user?.firstName} {user?.lastName}
+              Academic Profile • {user?.firstName} {user?.lastName}
             </Text>
           </View>
 
@@ -133,93 +133,93 @@ export const StudentProfileScreen: React.FC = () => {
           </View>
         </Card>
 
-  {/* Logout Action */ }
-  <Button
-    title="Sign Out of Portal"
-    variant="outline"
-    onPress={handleLogout}
-    icon={<Icon name="LogOut" size={18} color="#EA4335" />}
-    style={styles.logoutBtn}
-  />
+        {/* Logout Action */}
+        <Button
+          title="Sign Out of Portal"
+          variant="outline"
+          onPress={handleLogout}
+          icon={<Icon name="LogOut" size={18} color="#EA4335" />}
+          style={styles.logoutBtn}
+        />
       </ScrollView >
     </ScreenContainer >
   );
 };
 
-    const styles = StyleSheet.create({
-      scrollContent: {
-        padding: spacing.md,
-        paddingBottom: spacing.xxl,
-        width: '100%',
-      },
-        profileHeaderCard: {
-          alignItems: 'center',
-          paddingVertical: spacing.xl,
-          marginBottom: spacing.md,
-        },
-          avatarLarge: {
-            width: 80,
-            height: 80,
-            borderRadius: 40,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: spacing.md,
-          },
-            avatarInitials: {
-              fontSize: 26,
-              fontWeight: typography.weights.extrabold,
-            },
-              userName: {
-                fontSize: typography.sizes.xl,
-                fontWeight: typography.weights.extrabold,
-                letterSpacing: -0.2,
-                marginBottom: 2,
-              },
-                userEmail: {
-                  fontSize: typography.sizes.xs,
-                  color: '#5F6368',
-                  marginBottom: spacing.sm,
-                },
-                  badgeRow: {
-                    flexDirection: 'row',
-                    gap: 8,
-                  },
-                    cardTitle: {
-                      fontSize: typography.sizes.sm,
-                      fontWeight: typography.weights.extrabold,
-                      marginBottom: spacing.sm,
-                      letterSpacing: -0.1,
-                    },
-                      detailRow: {
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        paddingVertical: 12,
-                        borderBottomWidth: 0.8,
-                        borderBottomColor: 'rgba(100, 116, 139, 0.12)',
-                      },
-                        detailLabelGroup: {
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          gap: 8,
-                        },
-                          detailLabel: {
-                            fontSize: typography.sizes.xs,
-                            color: '#5F6368',
-                            fontWeight: typography.weights.medium,
-                          },
-                            detailValue: {
-                              fontSize: typography.sizes.xs,
-                              fontWeight: typography.weights.bold,
-                            },
-                              pointBalanceValue: {
-                                fontSize: typography.sizes.sm,
-                                fontWeight: typography.weights.extrabold,
-                                color: '#0F9D58',
-                              },
-                                logoutBtn: {
-                                  marginTop: spacing.md,
-                                },
+const styles = StyleSheet.create({
+  scrollContent: {
+    padding: spacing.md,
+    paddingBottom: spacing.xxl,
+    width: '100%',
+  },
+  profileHeaderCard: {
+    alignItems: 'center',
+    paddingVertical: spacing.xl,
+    marginBottom: spacing.md,
+  },
+  avatarLarge: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+  },
+  avatarInitials: {
+    fontSize: 26,
+    fontWeight: typography.weights.extrabold,
+  },
+  userName: {
+    fontSize: typography.sizes.xl,
+    fontWeight: typography.weights.extrabold,
+    letterSpacing: -0.2,
+    marginBottom: 2,
+  },
+  userEmail: {
+    fontSize: typography.sizes.xs,
+    color: '#5F6368',
+    marginBottom: spacing.sm,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  cardTitle: {
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.extrabold,
+    marginBottom: spacing.sm,
+    letterSpacing: -0.1,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 0.8,
+    borderBottomColor: 'rgba(100, 116, 139, 0.12)',
+  },
+  detailLabelGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  detailLabel: {
+    fontSize: typography.sizes.xs,
+    color: '#5F6368',
+    fontWeight: typography.weights.medium,
+  },
+  detailValue: {
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.bold,
+  },
+  pointBalanceValue: {
+    fontSize: typography.sizes.sm,
+    fontWeight: typography.weights.extrabold,
+    color: '#0F9D58',
+  },
+  logoutBtn: {
+    marginTop: spacing.md,
+  },
   headerGreetingCard: {
     padding: spacing.md,
     marginBottom: spacing.md,

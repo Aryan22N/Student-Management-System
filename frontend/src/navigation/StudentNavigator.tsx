@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Platform, useWindowDimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,29 +37,29 @@ export const StudentNavigator: React.FC = () => {
             } as any,
           }),
         },
-tabBarActiveTintColor: isDark ? '#4285F4' : '#0F9D58',
-      tabBarInactiveTintColor: '#5F6368',
+        tabBarActiveTintColor: isDark ? '#4285F4' : '#0F9D58',
+        tabBarInactiveTintColor: '#5F6368',
         tabBarLabelStyle: {
-    fontSize: 10,
-      fontWeight: '700',
+          fontSize: 10,
+          fontWeight: '700',
         },
-    tabBarIcon: ({ focused, color, size }) => {
-      let iconName: keyof typeof Ionicons.glyphMap = 'home';
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: keyof typeof Ionicons.glyphMap = 'home';
 
-      if (route.name === 'StudentDashboard') {
-        iconName = focused ? 'home' : 'home-outline';
-      } else if (route.name === 'Leaderboard') {
-        iconName = focused ? 'trophy' : 'trophy-outline';
-      } else if (route.name === 'PointHistory') {
-        iconName = focused ? 'receipt' : 'receipt-outline';
-      } else if (route.name === 'StudentProfile') {
-        iconName = focused ? 'person' : 'person-outline';
-      } else if (route.name === 'Settings') {
-        iconName = focused ? 'settings' : 'settings-outline';
-      }
+          if (route.name === 'StudentDashboard') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Leaderboard') {
+            iconName = focused ? 'trophy' : 'trophy-outline';
+          } else if (route.name === 'PointHistory') {
+            iconName = focused ? 'receipt' : 'receipt-outline';
+          } else if (route.name === 'StudentProfile') {
+            iconName = focused ? 'person' : 'person-outline';
+          } else if (route.name === 'Settings') {
+            iconName = focused ? 'settings' : 'settings-outline';
+          }
 
-      return <Ionicons name={iconName} size={size} color={color} />;
-    },
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
       })}
     >
       <Tab.Screen
@@ -80,7 +80,7 @@ tabBarActiveTintColor: isDark ? '#4285F4' : '#0F9D58',
       <Tab.Screen
         name="StudentProfile"
         component={StudentProfileScreen}
-        options={{ tabBarLabel: 'Dossier' }}
+        options={{ tabBarLabel: 'Profile' }}
       />
       <Tab.Screen
         name="Settings"

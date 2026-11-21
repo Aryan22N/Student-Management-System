@@ -87,7 +87,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       title: 'ACADEMIC LEDGER',
       items: [
         { id: 'PointHistory', label: 'Merit Ledger', icon: 'ReceiptText', screen: 'PointHistory' },
-        { id: 'StudentProfile', label: 'Student Dossier', icon: 'CircleUserRound', screen: 'StudentProfile' },
+        { id: 'StudentProfile', label: 'Student Profile', icon: 'CircleUserRound', screen: 'StudentProfile' },
         { id: 'Settings', label: 'Preferences', icon: 'Settings', screen: 'Settings' },
       ],
     },
@@ -373,11 +373,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 color={isDark ? '#FBBC04' : '#0F9D58'}
               />
             </TouchableOpacity>
-
-            {/* Profile Avatar Pill */}
-            <View style={[styles.headerAvatar, { backgroundColor: '#0F9D58' }]}>
-              <Text style={styles.headerAvatarText}>{initials}</Text>
-            </View>
           </View>
         </View>
 
@@ -400,10 +395,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     width: '100%',
-    minHeight: '100%' as any,
     ...Platform.select({
       web: {
         minHeight: '100vh' as any,
+      },
+      default: {
+        minHeight: '100%' as any,
       },
     }),
   },
@@ -597,53 +594,53 @@ const styles = StyleSheet.create({
     color: '#5F6368',
     marginTop: 1,
   },
-    headerRightCluster: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 10,
-    },
-    statusPill: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      borderWidth: 1,
-      gap: 6,
-    },
-    statusDot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-    },
-    statusText: {
-      fontSize: 10,
-      fontWeight: typography.weights.extrabold,
-      color: '#34A853',
-      letterSpacing: 0.4,
-    },
-    headerActionBtn: {
-      width: 32,
-      height: 32,
-      borderRadius: 8,
-      borderWidth: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    headerAvatar: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    headerAvatarText: {
-      color: '#FFFFFF',
-      fontSize: 11,
-      fontWeight: typography.weights.bold,
-    },
-    pageBody: {
-      flex: 1,
-      width: '100%',
-    },
-  });
+  headerRightCluster: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    gap: 6,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: typography.weights.extrabold,
+    color: '#34A853',
+    letterSpacing: 0.4,
+  },
+  headerActionBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerAvatarText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: typography.weights.bold,
+  },
+  pageBody: {
+    flex: 1,
+    width: '100%',
+  },
+});

@@ -82,10 +82,10 @@ export const StudentDetailsScreen: React.FC<StudentDetailsProps> = ({ route, nav
     return (
       <ScreenContainer
         title="Student Record"
-        subtitle="Retrieving profile dossier..."
+        subtitle="Retrieving student profile..."
         breadcrumbs={[
           { label: 'FACULTY' },
-          { label: 'DOSSIER' },
+          { label: 'PROFILE' },
         ]}
       >
         <View style={styles.centerContainer}>
