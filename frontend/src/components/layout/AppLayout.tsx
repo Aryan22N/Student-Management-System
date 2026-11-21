@@ -282,15 +282,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       }
 
       {/* Main Content Area */}
-      < View style={styles.mainContentArea} >
-        {/* Top Header Bar */}
-        < View
-          style={
-            [
+        <View style={styles.mainContentArea}>
+          {/* Top Header Bar */}
+        <View
+            style={[
               styles.headerBar,
               {
                 backgroundColor: isDark ? '#161B22' : '#FFFFFF',
                 borderBottomColor: theme.border,
+                paddingHorizontal: isDesktop ? 24 : 14,
+                paddingVertical: isDesktop ? 12 : 10,
               },
               Platform.select({
                 web: {
@@ -300,347 +301,348 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 } as any,
               }),
             ]}
-        >
-          <View style={styles.headerLeftCol}>
-            {breadcrumbs && breadcrumbs.length > 0 && (
-              <View style={styles.breadcrumbsRow}>
-                {breadcrumbs.map((b, i) => (
-                  <View key={i} style={styles.breadcrumbItem}>
-                    <Text style={styles.breadcrumbText}>{b.label}</Text>
-                    {i < breadcrumbs.length - 1 && (
-                      <Icon
-                        name="ChevronRight"
-                        size={11}
-                        color="#5F6368"
-                        style={{ marginHorizontal: 4 }}
-                      />
-                    )}
+          >
+              <View style={[styles.headerLeftCol, !isDesktop && { minWidth: 140 }]}>
+                {breadcrumbs && breadcrumbs.length > 0 && (
+                  <View style={styles.breadcrumbsRow}>
+                    {breadcrumbs.map((b, i) => (
+                      <View key={i} style={styles.breadcrumbItem}>
+                        <Text style={styles.breadcrumbText}>{b.label}</Text>
+                        {i < breadcrumbs.length - 1 && (
+                          <Icon
+                            name="ChevronRight"
+                            size={11}
+                            color="#5F6368"
+                            style={{ marginHorizontal: 4 }}
+                          />
+                        )}
+                      </View>
+                    ))}
                   </View>
-                ))}
+                )}
+                {title && (
+                  <Text
+                    style={[
+                      styles.headerTitle,
+                      { color: theme.text },
+                      !isDesktop && { fontSize: 16 },
+                    ]}
+                  >
+                    {title}
+                  </Text>
+                )}
+                {subtitle && (
+              <Text style={styles.headerSubtitle} numberOfLines={!isDesktop ? 1 : 2}>{subtitle}</Text>
+                )}
               </View>
-            )}
-            {title && (
-              <Text
-                style={[
-                  styles.headerTitle,
-                  { color: theme.text },
-                ]}
-              >
-                {title}
-              </Text>
-            )}
-            {subtitle && (
-              <Text style={styles.headerSubtitle}>{subtitle}</Text>
-            )}
-          </View>
 
-          {/* Header Right Cluster */}
-          <View style={styles.headerRightCluster}>
-            {/* System Status Pill */}
-            <View
-              style={[
-                styles.statusPill,
-                {
-                  backgroundColor: isDark
-                    ? 'rgba(52, 168, 83, 0.12)'
-                    : '#E6F4EA',
-                  borderColor: isDark ? '#34A853' : '#A8D5B5',
-                },
-              ]}
-            >
-              <View style={[styles.statusDot, { backgroundColor: '#34A853' }]} />
-              <Text style={styles.statusText}>
-                Campus ERP Online
-              </Text>
+              {/* Header Right Cluster */}
+              <View style={styles.headerRightCluster}>
+                {/* System Status Pill */}
+                <View
+                  style={[
+                    styles.statusPill,
+                    {
+                      backgroundColor: isDark
+                        ? 'rgba(52, 168, 83, 0.12)'
+                        : '#E6F4EA',
+                      borderColor: isDark ? '#34A853' : '#A8D5B5',
+                    },
+                  ]}
+                >
+                  <View style={[styles.statusDot, { backgroundColor: '#34A853' }]} />
+                  <Text style={styles.statusText}>
+                    Campus ERP Online
+                  </Text>
+                </View>
+
+                {/* Theme Toggle Button */}
+                <TouchableOpacity
+                  onPress={toggleTheme}
+                  activeOpacity={0.7}
+                  style={[
+                    styles.headerActionBtn,
+                    {
+                      borderColor: theme.border,
+                      backgroundColor: isDark ? '#162538' : '#FFFFFF',
+                    },
+                    Platform.select({ web: { cursor: 'pointer' } as any }),
+                  ]}
+                >
+                  <Icon
+                    name={isDark ? 'Sun' : 'Moon'}
+                    size={16}
+                    color={isDark ? '#FBBC04' : '#0F9D58'}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
 
-            {/* Theme Toggle Button */}
-            <TouchableOpacity
-              onPress={toggleTheme}
-              activeOpacity={0.7}
+            {/* Inner Page Body */}
+            <View
               style={[
-                styles.headerActionBtn,
-                {
-                  borderColor: theme.border,
-                  backgroundColor: isDark ? '#162538' : '#FFFFFF',
-                },
-                Platform.select({ web: { cursor: 'pointer' } as any }),
+                styles.pageBody,
+                maxWidth ? { maxWidth, width: '100%', alignSelf: 'center' } : null,
               ]}
             >
-              <Icon
-                name={isDark ? 'Sun' : 'Moon'}
-                size={16}
-                color={isDark ? '#FBBC04' : '#0F9D58'}
-              />
-            </TouchableOpacity>
+              {children}
+            </View>
           </View>
         </View>
-
-        {/* Inner Page Body */}
-        <View
-          style={[
-            styles.pageBody,
-            maxWidth ? { maxWidth, width: '100%', alignSelf: 'center' } : null,
-          ]}
-        >
-          {children}
-        </View>
-      </View>
-    </View>
-  );
+        );
 };
 
-const styles = StyleSheet.create({
-  rootContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    width: '100%',
-    ...Platform.select({
-      web: {
-        minHeight: '100vh' as any,
+        const styles = StyleSheet.create({
+          rootContainer: {
+          flex: 1,
+        flexDirection: 'row',
+        width: '100%',
+        ...Platform.select({
+          web: {
+          minHeight: '100vh' as any,
       },
-      default: {
-        minHeight: '100%' as any,
+        default: {
+          minHeight: '100%' as any,
       },
     }),
   },
-  sidebar: {
-    width: 250,
-    borderRightWidth: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    zIndex: 10,
+        sidebar: {
+          width: 250,
+        borderRightWidth: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        zIndex: 10,
   },
-  brandBox: {
-    paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 14,
-    borderBottomWidth: 1,
+        brandBox: {
+          paddingHorizontal: 16,
+        paddingTop: 18,
+        paddingBottom: 14,
+        borderBottomWidth: 1,
   },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+        brandRow: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
   },
-  crestIconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
+        crestIconBox: {
+          width: 36,
+        height: 36,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
   },
-  brandTitleCol: {
-    flex: 1,
+        brandTitleCol: {
+          flex: 1,
   },
-  brandTitle: {
-    fontSize: 14,
-    fontWeight: typography.weights.extrabold,
-    letterSpacing: 0.8,
+        brandTitle: {
+          fontSize: 14,
+        fontWeight: typography.weights.extrabold,
+        letterSpacing: 0.8,
   },
-  brandSubtitle: {
-    fontSize: 9,
-    fontWeight: typography.weights.bold,
-    color: '#0F9D58',
-    letterSpacing: 0.8,
+        brandSubtitle: {
+          fontSize: 9,
+        fontWeight: typography.weights.bold,
+        color: '#0F9D58',
+        letterSpacing: 0.8,
   },
-  roleBadgeContainer: {
-    marginTop: 10,
+        roleBadgeContainer: {
+          marginTop: 10,
   },
-  rolePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
-    gap: 6,
-    alignSelf: 'flex-start',
+        rolePill: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 6,
+        borderWidth: 1,
+        gap: 6,
+        alignSelf: 'flex-start',
   },
-  roleDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+        roleDot: {
+          width: 6,
+        height: 6,
+        borderRadius: 3,
   },
-  rolePillText: {
-    fontSize: 9,
-    fontWeight: typography.weights.extrabold,
-    color: '#0F9D58',
-    letterSpacing: 0.6,
+        rolePillText: {
+          fontSize: 9,
+        fontWeight: typography.weights.extrabold,
+        color: '#0F9D58',
+        letterSpacing: 0.6,
   },
-  navScrollView: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 14,
+        navScrollView: {
+          flex: 1,
+        paddingHorizontal: 10,
+        paddingTop: 14,
   },
-  navSectionGroup: {
-    marginBottom: 16,
+        navSectionGroup: {
+          marginBottom: 16,
   },
-  navSectionHeader: {
-    fontSize: 9,
-    fontWeight: typography.weights.extrabold,
-    color: '#80868B',
-    letterSpacing: 1,
-    paddingHorizontal: 10,
-    marginBottom: 6,
-    textTransform: 'uppercase',
+        navSectionHeader: {
+          fontSize: 9,
+        fontWeight: typography.weights.extrabold,
+        color: '#80868B',
+        letterSpacing: 1,
+        paddingHorizontal: 10,
+        marginBottom: 6,
+        textTransform: 'uppercase',
   },
-  navItemBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 9,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    marginBottom: 2,
-    gap: 10,
+        navItemBtn: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 9,
+        paddingHorizontal: 10,
+        borderRadius: 8,
+        marginBottom: 2,
+        gap: 10,
   },
-  navItemText: {
-    fontSize: typography.sizes.xs,
-    flex: 1,
+        navItemText: {
+          fontSize: typography.sizes.xs,
+        flex: 1,
   },
-  activeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+        activeDot: {
+          width: 6,
+        height: 6,
+        borderRadius: 3,
   },
-  sidebarFooter: {
-    padding: 14,
-    borderTopWidth: 1,
+        sidebarFooter: {
+          padding: 14,
+        borderTopWidth: 1,
   },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 10,
+        profileRow: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: 10,
   },
-  avatarCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+        avatarCircle: {
+          width: 36,
+        height: 36,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
   },
-  avatarInitials: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: typography.weights.bold,
+        avatarInitials: {
+          color: '#FFFFFF',
+        fontSize: 12,
+        fontWeight: typography.weights.bold,
   },
-  profileTextCol: {
-    flex: 1,
+        profileTextCol: {
+          flex: 1,
   },
-  profileName: {
-    fontSize: 12,
-    fontWeight: typography.weights.bold,
+        profileName: {
+          fontSize: 12,
+        fontWeight: typography.weights.bold,
   },
-  profileRole: {
-    fontSize: 10,
-    color: '#5F6368',
-    fontWeight: typography.weights.medium,
+        profileRole: {
+          fontSize: 10,
+        color: '#5F6368',
+        fontWeight: typography.weights.medium,
   },
-  sidebarLogoutBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 34,
-    borderRadius: 8,
-    borderWidth: 1,
-    gap: 6,
+        sidebarLogoutBtn: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 34,
+        borderRadius: 8,
+        borderWidth: 1,
+        gap: 6,
   },
-  sidebarLogoutText: {
-    fontSize: 11,
-    fontWeight: typography.weights.semibold,
-    color: '#EA4335',
+        sidebarLogoutText: {
+          fontSize: 11,
+        fontWeight: typography.weights.semibold,
+        color: '#EA4335',
   },
-  mainContentArea: {
-    flex: 1,
-    flexDirection: 'column',
-    width: '100%',
+        mainContentArea: {
+          flex: 1,
+        flexDirection: 'column',
+        width: '100%',
   },
-  headerBar: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 10,
+        headerBar: {
+          paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 10,
   },
-  headerLeftCol: {
-    flex: 1,
-    minWidth: 200,
+        headerLeftCol: {
+          flex: 1,
+        minWidth: 200,
   },
-  breadcrumbsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
+        breadcrumbsRow: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 2,
   },
-  breadcrumbItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+        breadcrumbItem: {
+          flexDirection: 'row',
+        alignItems: 'center',
   },
-  breadcrumbText: {
-    fontSize: 10,
-    fontWeight: typography.weights.bold,
-    color: '#0F9D58',
-    letterSpacing: 0.6,
+        breadcrumbText: {
+          fontSize: 10,
+        fontWeight: typography.weights.bold,
+        color: '#0F9D58',
+        letterSpacing: 0.6,
   },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: typography.weights.extrabold,
-    letterSpacing: -0.2,
+        headerTitle: {
+          fontSize: 18,
+        fontWeight: typography.weights.extrabold,
+        letterSpacing: -0.2,
   },
-  headerSubtitle: {
-    fontSize: typography.sizes.xs,
-    color: '#5F6368',
-    marginTop: 1,
+        headerSubtitle: {
+          fontSize: typography.sizes.xs,
+        color: '#5F6368',
+        marginTop: 1,
   },
-  headerRightCluster: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+        headerRightCluster: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
   },
-  statusPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
-    gap: 6,
+        statusPill: {
+          flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 6,
+        borderWidth: 1,
+        gap: 6,
   },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+        statusDot: {
+          width: 6,
+        height: 6,
+        borderRadius: 3,
   },
-  statusText: {
-    fontSize: 10,
-    fontWeight: typography.weights.extrabold,
-    color: '#34A853',
-    letterSpacing: 0.4,
+        statusText: {
+          fontSize: 10,
+        fontWeight: typography.weights.extrabold,
+        color: '#34A853',
+        letterSpacing: 0.4,
   },
-  headerActionBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+        headerActionBtn: {
+          width: 32,
+        height: 32,
+        borderRadius: 8,
+        borderWidth: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
   },
-  headerAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+        headerAvatar: {
+          width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
   },
-  headerAvatarText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: typography.weights.bold,
+        headerAvatarText: {
+          color: '#FFFFFF',
+        fontSize: 11,
+        fontWeight: typography.weights.bold,
   },
-  pageBody: {
-    flex: 1,
-    width: '100%',
+        pageBody: {
+          flex: 1,
+        width: '100%',
   },
 });
