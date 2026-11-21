@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Student Management System",
+    "slug": "student-management-system",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0F9D58"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F9D58"
+      },
+      "package": "com.swayam90.studentmanagementsystem"
+    },
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d1922727-7e13-449d-9ff2-556ecf9e1ca0"
+      }
+    }
+  }
+}
