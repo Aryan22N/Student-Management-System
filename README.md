@@ -274,21 +274,93 @@ All endpoints follow RESTful conventions, prefixed with `/api/v1`:
 
 ---
 
-## 5. User Interface Design (Google Classroom Theme)
+## 5. User Interface Design & Role-Based Dashboards
 
-The UI adheres to the **Google Classroom visual language**:
-- **Color Palette**:
-  - Primary Green: `#0F9D58`
-  - Dark Header Green: `#1E7E44` / `#137333`
-  - Accent / Surface Tint: `#E6F4EA`
-  - Background: `#F8FAF9` (Light) / `#0E1726` (Dark)
-  - Typography: Clean Google-style typography (`#202124` text color)
-- **Classroom Card Grid**:
-  - Responsive multi-column grid adapting from single-column mobile view to multi-card laptop desktop layouts.
-  - Deep-green card headers with `ENROLLED` badges, circular teacher initials, 3-dots context menus, and quick-action footers (Folder, Standings, Profile).
-- **Classwork & Merit Stream**:
-  - Filterable stream with active tab underline indicators (`All Activity`, `Quizzes`, `Merit Ledger`).
-  - Color-coded activity items showing exact awarded points (`+10 pts`, `+60 pts`) and quiz submission status (`Graded 5/5`, `Take Quiz`).
+The application is built around the **Google Classroom visual language** (`#0F9D58` primary green, `#E6F4EA` light green, `#F8FAF9` background), delivering distinct, role-segregated dashboard experiences for students and teachers.
+
+---
+
+### 5.1 Student Workspace & Dashboard
+
+The **Student Dashboard** serves as the learner's centralized academic portal, offering real-time visibility into active classrooms, personal merit balances, dynamic standings, and incoming coursework.
+
+![Student Workspace Dashboard](./docs/screenshots/student_dashboard.png)
+
+#### Student Dashboard Architecture & Features:
+1. **Header & Contextual Breadcrumbs**:
+   - Dynamic path indicator (`STUDENT > DASHBOARD`).
+   - System health badge (`● Campus ERP Online`) providing connectivity feedback.
+   - Quick theme toggle (Light / Dark mode).
+2. **Left Navigation Sidebar**:
+   - **Student Workspace**: Access to `Student Dashboard` and `Rank Standings`.
+   - **Academic Ledger**: Direct links to `Merit Ledger` (point transaction history), `Student Profile` (academic dossier and records), and `Preferences`.
+   - **User Session Card**: Bottom-docked identity pill displaying student avatar (`AN`), student full name, role badge (`Active Student`), and a 1-click **Sign Out** button.
+3. **Student Overview & Action Banner**:
+   - **Welcome Header**: Personalized greeting with student name.
+   - **Merit Points Pill**: Verified running balance (`160 Merits`).
+   - **Leaderboard Position Pill**: Real-time institutional ranking badge (`Rank #9`).
+   - **`+ Join Classroom` Action**: Modal flow allowing students to enter teacher-provided enrollment codes (e.g., `CLS-83678P`) to instantly join course rosters.
+4. **Enrolled Classrooms Grid**:
+   - Rendered using Google Classroom aesthetic with deep-green course banner headers (`#137333` / `#0F9D58`).
+   - Course subject title (e.g., `Cloud Computing`), section (e.g., `Sec A`), and instructor name.
+   - Circular teacher initials avatar overlapping banner boundary.
+   - Quick-action footer containing shortcuts for course materials, course standings, and instructor profile.
+   - **Recent Activity Callout**: Highlights latest classwork submissions and due dates (e.g., `Recent: Cloud Computing Mastery Quiz (5/5) — Submitted`).
+5. **Classwork & Merit Stream**:
+   - **Filterable Tabs**: Real-time switching between `All Activity`, `Quizzes`, and `Merit Ledger`.
+   - **Live Activity Feed**: Interactive chronological stream featuring:
+     - **Graded Quizzes**: Shows assessment title, course association, and score badge (e.g., `Graded 5/5`).
+     - **Faculty Merit Awards**: Displays recognized achievements (e.g., `Good Handwriting`) with awarded points capsule (`+100 pts`).
+     - **Automated Quiz Merits**: Point rewards earned upon assessment completion (e.g., `Quiz Completed: +60 pts`).
+
+---
+
+### 5.2 Faculty & Teacher Dashboard
+
+The **Teacher / Faculty Dashboard** provides an administrative hub tailored for educators to manage course rosters, distribute merit points, review top scholars, and monitor classroom engagement.
+
+![Faculty Dashboard](./docs/screenshots/teacher_dashboard.png)
+
+#### Teacher Dashboard Architecture & Features:
+1. **Header & Department Welcome**:
+   - Breadcrumb navigation (`FACULTY > DASHBOARD`).
+   - Academic department greeting (e.g., `CSE • Welcome, Aryan Nandanwar`).
+   - System status monitor (`● Campus ERP Online`) and global theme switch.
+2. **Left Operations Sidebar**:
+   - **Core Operations**: Quick navigation to `Faculty Dashboard`, `Student Directory` (searchable student roster), and `Award Points` (point distribution modal).
+   - **Academics & Metrics**: Access to `Rank Standings` and `Preferences`.
+   - **Faculty Session Card**: Displays instructor avatar, name, `Academic Faculty` designation, and session logout.
+3. **Faculty Profile & Action Header**:
+   - Instructor identity banner showing employee code (`ID: ARN123`), assigned department (`CSE`), and official evaluation email.
+   - **Primary Action Buttons**:
+     - `Award Points`: Launches the point distribution screen with student selector, category picker, and pessimistic balance locking.
+     - `+ New Class`: Modal trigger to create new courses with auto-generated unique enrollment codes.
+4. **Key Performance Indicators (KPIs)**:
+   - **Total Students**: Real-time count of active students registered in the academic institution.
+   - **Active Classes**: Total courses currently taught and managed by the faculty member.
+   - **Top Points Pool**: Aggregate merit tally accumulated across top-ranking scholars (e.g., `2315 pts`).
+   - **Leaderboard Spotlight**: Highlighting the current Rank #1 student and highest score (e.g., `Leader: Elena Rostova — 1090 pts`).
+5. **My Active Classrooms**:
+   - Visual registry of managed classrooms with department and section tags.
+   - Enrolled student headcount indicator.
+   - **Secure Enrollment Code Capsule**: Prominently displayed unique join key (e.g., `CLS-83678P`) with a 1-click **Copy** button for distribution to students.
+   - `View Roster >` link to inspect enrolled student list and grade records.
+6. **Top Performing Students Podium**:
+   - Mini-leaderboard preview embedded directly into the faculty homepage.
+   - Renders top academic performers with gold and silver medal badges (`#1`, `#2`), full student names, unique student IDs, grade levels, and live point balances.
+   - Direct link to `View Full Standings →`.
+
+---
+
+### 5.3 Design System & Google Classroom Theming
+
+- **Color Tokens**:
+  - Primary Green: `#0F9D58` (Classroom Header & Primary Buttons)
+  - Surface Accent: `#E6F4EA` (Active tabs, pill backgrounds, selection highlights)
+  - Dark Header Green: `#1E7E44` / `#137333` (Course card hero banners)
+  - Backgrounds: `#F8FAF9` (Google Classroom Light Canvas) / `#0E1726` (Deep Obsidian Dark Canvas)
+  - Text Hierarchy: `#202124` (High-contrast text) / `#5F6368` (Secondary metadata text)
+- **Responsive Card Grid**: Adapts cleanly across mobile screens (single-column swipe view), tablets (2-column grid), and widescreen desktop displays (multi-column Google Classroom grid).
 
 ---
 
