@@ -15,25 +15,27 @@ The application implements a strict **Controller-Service-Repository** architectu
 <details>
 <summary><b>View Component Mapping & Interaction Specifications</b></summary>
 
-- **Frontend Client (`React Native / Expo SDK 51`)**:
-  - `UI Screens & Layouts`: Student & Teacher Navigators, responsive containers (`ScreenContainer`).
-  - `ThemeContext`: React Context API providing real-time switching between Light (`#f8fafc`) and Dark (`#0b0f19`) modes.
+- **Frontend Client (`React Native 0.88 / Expo SDK 58`)**:
+  - `UI Screens & Layouts`: Student & Teacher Navigators, Google Classroom card feeds, stream filters, and responsive containers (`ScreenContainer`).
+  - `ThemeContext`: React Context API providing real-time switching between Google Classroom Light (`#0F9D58` primary, `#E6F4EA` surface, `#F8FAF9` background) and Dark (`#0E1726` background, `#1E293B` cards) modes.
   - `Redux Toolkit`: Centralized state management for `authSlice` (user identity, profiles, session state) and `leaderboardSlice` (cached rankings, pagination).
   - `SecureStore / LocalStorage`: Hardware-backed AES-256 encrypted storage on iOS/Android; persistent `localStorage` on Expo Web.
   - `Axios Client`: Configured with base URL dynamic resolution and request/response interceptors.
 - **Spring Security 6 Gateway (Stateless)**:
-  - `CorsConfigurationSource`: Strict whitelist of origins, HTTP verbs (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`), and headers.
+  - `CorsConfigurationSource`: Whitelist of origins, HTTP verbs (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`), and headers.
   - `JwtAuthenticationFilter`: Extracts Bearer JWT, validates HMAC-SHA256 signature and expiration, populates `SecurityContext`.
   - `JwtAuthenticationEntryPoint`: Catches unauthenticated requests and returns standardized `401 Unauthorized`.
 - **Spring Boot 3.3.5 Backend (Controller-Service-Repository)**:
-  - `REST Controllers`: `AuthController`, `StudentController`, `PointController`, `LeaderboardController`.
-  - `Service Implementations`: `AuthServiceImpl`, `StudentServiceImpl`, `PointServiceImpl`, `LeaderboardServiceImpl`.
-  - `Repositories`: Spring Data JPA with `@Lock(LockModeType.PESSIMISTIC_WRITE)`.
-- **PostgreSQL 18 Relational Persistence**:
+  - `REST Controllers`: `AuthController`, `StudentController`, `PointController`, `LeaderboardController`, `ClassController`, `QuizController`.
+  - `Service Implementations`: `AuthServiceImpl`, `StudentServiceImpl`, `PointServiceImpl`, `LeaderboardServiceImpl`, `ClassServiceImpl`, `QuizServiceImpl`.
+  - `Repositories`: Spring Data JPA with `@Lock(LockModeType.PESSIMISTIC_WRITE)` for point adjustments and student updates.
+- **PostgreSQL 16 / 18 Relational Persistence (Flyway Migrations V1-V3)**:
   - `users`: Core identity table with unique email, 12-round BCrypt password hash, role (`STUDENT`, `TEACHER`), and account status.
   - `student_profiles`: One-to-one foreign key with `users`, unique student ID number, class level, total points balance.
   - `teacher_profiles`: One-to-one foreign key with `users`, unique employee ID, department name.
   - `point_transactions`: Immutable append-only audit ledger with student FK, teacher FK, points delta, transaction category, and reason.
+  - `classes` & `class_enrollments`: Classroom details, unique join codes, teacher association, and student enrollment records.
+  - `quizzes`, `quiz_questions`, `quiz_submissions`: Assessments tied to classrooms, multiple choice question sets with point values, and student submissions with automated grading.
 
 </details>
 
@@ -103,8 +105,8 @@ When the mobile app cold-starts or the web browser reloads, the user's authentic
 5. **Role-Based Navigation Branching**:
    - Redux hydrates `user`, `studentProfile`, `teacherProfile`, sets `isAuthenticated = true`, and sets `isRestoringAuth = false`.
    - `RootNavigator` dynamically mounts:
-     - **Student**: `StudentNavigator` (Dashboard, Leaderboard, Point History, Profile, Settings).
-     - **Teacher**: `TeacherNavigator` (Faculty Dashboard, Student Directory, Award Points, Leaderboard, Dossier).
+     - **Student**: `StudentNavigator` (Dashboard, Leaderboard, Point History, Student Profile, Settings).
+     - **Teacher**: `TeacherNavigator` (Faculty Dashboard, Student Directory, Award Points, Leaderboard, Student Profile).
 
 </details>
 
@@ -192,27 +194,63 @@ The dynamic leaderboard relies on server-side window functions to calculate stan
 
 ---
 
+### Flow 5: Classroom Quiz Creation, Assessment & Automated Merit Flow
+
+Teachers author interactive quizzes for enrolled classes. When students submit their responses, the backend automatically scores the test, allocates merit points via pessimistic locking, and recalculates dynamic leaderboard rankings in real-time.
+
+#### Visual Quiz Assessment Workflow
+
+![Quiz Assessment Flow](./docs/diagrams/6_quiz_assessment_flow.svg)
+
+<details>
+<summary><b>Workflow Execution Details</b></summary>
+
+1. **Teacher Quiz Creation**:
+   - Faculty member navigates to a classroom and selects **Create Quiz**.
+   - Defines quiz title, instructions, points award value, and multiple choice questions with correct option designations.
+   - Dispatched via `POST /api/v1/classes/{classId}/quizzes`.
+2. **Student Classwork Stream**:
+   - Enrolled students see the quiz card populated in their Google Classroom **Classwork & Merit Stream**.
+   - Status indicators display `Take Quiz` or `Due Soon`.
+3. **Interactive Assessment**:
+   - Student taps quiz and enters `QuizAssessmentScreen`.
+   - Progress bar tracks completion through each question.
+4. **Automated Submission & Scoring**:
+   - Client sends `POST /api/v1/quizzes/{quizId}/submit` with student answers.
+   - `QuizServiceImpl` verifies whether the student has already submitted (duplicate guard).
+   - Backend checks responses against the answer key, calculating final raw score and percentage.
+5. **Automated Merit Points Distribution**:
+   - Based on percentage scored, merit points are automatically computed.
+   - `PointServiceImpl` locks student row via `PESSIMISTIC_WRITE`, updates total points, and logs an immutable audit transaction: `Quiz Completed: {QuizName} (Score: X/Y, +Z pts)`.
+   - Redux automatically invalidates cached leaderboard rankings, prompting immediate re-ordering.
+
+</details>
+
+---
+
 ## 3. Comprehensive Implemented Feature Matrix
 
-| Feature Area | Module | Implementation Details | Tested Status |
+| Feature Area | Module / Path | Implementation Details | Tested Status |
 | :--- | :--- | :--- | :--- |
-| **Authentication** | [AuthController.java](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/backend/src/main/java/com/sms/controller/AuthController.java) | Stateless JWT authentication, 12-round BCrypt encryption, teacher secret verification. | **Verified (20/20 QA)** |
-| **Session Persistence** | [secureStorage.ts](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/utils/secureStorage.ts) | Encrypted token storage via `Expo SecureStore` (native) and `localStorage` (web). | **Verified** |
-| **Protected Navigation** | [RootNavigator.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/navigation/RootNavigator.tsx) | Dynamic route guarding based on auth status and role (`STUDENT` vs `TEACHER`). | **Verified** |
-| **Student Directory** | [StudentDirectoryScreen.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/features/teacher/StudentDirectoryScreen.tsx) | Live search across name, email, student ID; paginated roster listing. | **Verified** |
-| **Student Dossier** | [StudentDetailsScreen.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/features/teacher/StudentDetailsScreen.tsx) | Detailed student profile view with quick point allocation trigger. | **Verified** |
-| **Point Allocation** | [AwardPointsScreen.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/features/teacher/AwardPointsScreen.tsx) | Preset chip buttons (`+10`, `+25`, `+50`, `+100`, `-10`, `-25`), custom point values, categories. | **Verified** |
-| **Concurrency Guard** | [PointServiceImpl.java](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/backend/src/main/java/com/sms/service/impl/PointServiceImpl.java) | Pessimistic locking (`PESSIMISTIC_WRITE`) guarantees isolation during concurrent point changes. | **Verified** |
-| **Transaction Ledger** | [PointHistoryScreen.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/features/student/PointHistoryScreen.tsx) | Immutable point ledger with faculty attribution, timestamp, and reason tags. | **Verified** |
-| **Dynamic Leaderboard** | [LeaderboardScreen.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/features/leaderboard/LeaderboardScreen.tsx) | Top 3 podium stand visualization with medal badges and current user indicator. | **Verified** |
-| **Theming Engine** | [ThemeContext.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/context/ThemeContext.tsx) | Instant Light & Dark mode toggle persisted to device storage. | **Verified** |
-| **Responsive Containers** | [ScreenContainer.tsx](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/frontend/src/components/layout/ScreenContainer.tsx) | Responsive maximum widths for 1920px desktop down to 375px mobile. | **Verified** |
+| **Authentication** | `backend/src/main/java/com/sms/controller/AuthController.java` | Stateless JWT authentication, 12-round BCrypt encryption, teacher secret verification. | **Verified (20/20 QA)** |
+| **Session Persistence** | `frontend/src/utils/secureStorage.ts` | Encrypted token storage via `Expo SecureStore` (native) and `localStorage` (web). | **Verified** |
+| **Protected Navigation** | `frontend/src/navigation/RootNavigator.tsx` | Dynamic route guarding based on auth status and role (`STUDENT` vs `TEACHER`). | **Verified** |
+| **Student Directory** | `frontend/src/features/teacher/StudentDirectoryScreen.tsx` | Live search across name, email, student ID; paginated roster listing. | **Verified** |
+| **Student Profile** | `frontend/src/features/student/StudentProfileScreen.tsx` | Comprehensive student profile view with credentials, grade level, and point summary. | **Verified** |
+| **Point Allocation** | `frontend/src/features/teacher/AwardPointsScreen.tsx` | Preset chip buttons (`+10`, `+25`, `+50`, `+100`, `-10`, `-25`), custom point values, categories. | **Verified** |
+| **Concurrency Guard** | `backend/src/main/java/com/sms/service/impl/PointServiceImpl.java` | Pessimistic locking (`PESSIMISTIC_WRITE`) guarantees isolation during concurrent point changes. | **Verified** |
+| **Transaction Ledger** | `frontend/src/features/student/PointHistoryScreen.tsx` | Immutable point ledger with faculty attribution, timestamp, and reason tags. | **Verified** |
+| **Dynamic Leaderboard** | `frontend/src/features/leaderboard/LeaderboardScreen.tsx` | Top 3 podium stand visualization with medal badges and current user indicator. | **Verified** |
+| **Classroom Management**| `backend/src/main/java/com/sms/controller/ClassController.java` | Create classes, generate join codes, enroll students, and render Google Classroom cards. | **Verified** |
+| **Quiz Engine** | `backend/src/main/java/com/sms/controller/QuizController.java` | Question authoring, interactive test taking, auto-grading, and automated merit award. | **Verified** |
+| **Theming Engine** | `frontend/src/context/ThemeContext.tsx` | Instant Light & Dark mode toggle persisted to device storage. | **Verified** |
+| **Responsive Containers** | `frontend/src/components/layout/ScreenContainer.tsx` | Responsive maximum widths for 1920px desktop down to 375px mobile. | **Verified** |
 
 ---
 
 ## 4. Verification & QA Test Evidence
 
-The automated test script [run_qa_tests.ps1](file:///c:/Users/swaya/Development/FullStack%20HONORS/FinalProject/run_qa_tests.ps1) executed the following 20 verification stages against the live application:
+The automated test script [run_qa_tests.ps1](file:///c:/Users/Aryan/Downloads/Student_Management_System-main/run_qa_tests.ps1) executed the following 26 verification steps across 10 stages against the live application:
 
 ```
 ==========================================================
@@ -240,23 +278,33 @@ The automated test script [run_qa_tests.ps1](file:///c:/Users/swaya/Development/
  [PASS] Student attempting to access student directory returns 403 Forbidden
  [PASS] Student attempting to award points returns 403 Forbidden
 
-[STAGE 6] Point Management Flow (Award, Deduct, Adjust)
- [PASS] Teacher awards 100 ACADEMIC points -> balance = 100
- [PASS] Teacher applies -25 PENALTY deduction -> balance = 75
- [PASS] Teacher applies +15 ADJUSTMENT -> balance = 90
+[STAGE 6] Class Creation & Enrollment (Teacher-Student Linking)
+ [PASS] Teacher successfully created class with enrollment code
+ [PASS] Teacher /classes/my lists created classroom
+ [PASS] Student Elena successfully enrolled in class using code
+ [PASS] Student /classes/enrolled reflects enrolled course and teacher name
+ [PASS] Duplicate class enrollment rejected with status 409
+
+[STAGE 7] Strict Ownership & Authorization Protection
+ [PASS] Unassigned teacher point award strictly rejected with 403 Forbidden
+
+[STAGE 8] Point Management Flow (Award, Deduct, Adjust)
+ [PASS] Authorized teacher awards 100 ACADEMIC points -> balance = 100
+ [PASS] Authorized teacher applies -25 PENALTY deduction -> balance = 75
+ [PASS] Authorized teacher applies +15 ADJUSTMENT -> balance = 90
  [PASS] Student profile reflects verified balance of 90 points
  [PASS] Student ledger contains exactly 3 immutable transaction records
 
-[STAGE 7] Validation Guards & Rollback Consistency
+[STAGE 9] Validation Guards & Rollback Consistency
  [PASS] Deduction exceeding student points balance rejected with 400 Bad Request
  [PASS] Awarding to non-existent student rejected with 404 Not Found
 
-[STAGE 8] Dynamic Leaderboard & Competition Ranking
+[STAGE 10] Dynamic Leaderboard & Competition Ranking
  [PASS] Tied scores (150 pts) share the exact same rank position
  [PASS] Lower score (90 pts) receives lower rank
- [PASS] Dynamic re-ordering: Elena promoted to Rank 1 with 290 points
+ [PASS] Dynamic re-ordering: Elena promoted to Rank 1 with 1090 points
 
 ==========================================================
- TEST RUN COMPLETE: 20 Passed, 0 Failed (100% Success)
+ TEST RUN COMPLETE: 26 Passed, 0 Failed (100% Success)
 ==========================================================
 ```

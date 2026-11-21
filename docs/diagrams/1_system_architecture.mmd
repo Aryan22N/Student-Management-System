@@ -1,16 +1,16 @@
 flowchart TD
-    classDef clientStyle fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0f172a,rx:8,ry:8
-    classDef securityStyle fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#0f172a,rx:8,ry:8
-    classDef backendStyle fill:#e0e7ff,stroke:#4f46e5,stroke-width:2px,color:#0f172a,rx:8,ry:8
-    classDef dbStyle fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#0f172a,rx:8,ry:8
-    classDef actorStyle fill:#f8fafc,stroke:#475569,stroke-width:2px,color:#0f172a,rx:20,ry:20
-    classDef storageStyle fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#0f172a,rx:8,ry:8
+    classDef clientStyle fill:#e6f4ea,stroke:#0f9d58,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef securityStyle fill:#fef7e0,stroke:#f9ab00,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef backendStyle fill:#e8f0fe,stroke:#1a73e8,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef dbStyle fill:#ceead6,stroke:#137333,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef actorStyle fill:#f8f9fa,stroke:#5f6368,stroke-width:2px,color:#202124,rx:20,ry:20
+    classDef storageStyle fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#202124,rx:8,ry:8
 
     User(["👤 Student / Teacher Actor"]):::actorStyle
 
-    subgraph Frontend["Frontend Client (React Native / Expo SDK 51)"]
-        UI["📱 UI Screens & Layouts<br/>(Auth, Student & Teacher Navigators)"]:::clientStyle
-        Theme["🎨 ThemeContext<br/>(Light / Dark Mode State)"]:::clientStyle
+    subgraph Frontend["Frontend Client (React Native 0.88 / Expo SDK 58)"]
+        UI["📱 UI Screens & Layouts<br/>(Google Classroom Views: Feed, Stream, Roster)"]:::clientStyle
+        Theme["🎨 ThemeContext<br/>(Google Classroom Light / Dark Theme)"]:::clientStyle
         Redux["⚡ Redux Toolkit Store<br/>(authSlice & leaderboardSlice)"]:::clientStyle
         Storage["🔐 SecureStore / LocalStorage<br/>(Hardware-Backed Encrypted Storage)"]:::storageStyle
         Axios["🌐 Axios HTTP Client<br/>(Dynamic Base URL & JWT Interceptors)"]:::clientStyle
@@ -23,16 +23,18 @@ flowchart TD
     end
 
     subgraph Backend["Spring Boot 3.3.5 Backend (Controller-Service-Repository)"]
-        Controllers["🎮 REST Controllers<br/>(AuthController, StudentController,<br/>PointController, LeaderboardController)"]:::backendStyle
-        Services["⚙️ Service Layer<br/>(AuthServiceImpl, StudentServiceImpl,<br/>PointServiceImpl, LeaderboardServiceImpl)"]:::backendStyle
+        Controllers["🎮 REST Controllers<br/>(AuthController, StudentController, PointController,<br/>LeaderboardController, ClassController, QuizController)"]:::backendStyle
+        Services["⚙️ Service Layer<br/>(AuthService, StudentService, PointService,<br/>LeaderboardService, ClassService, QuizService)"]:::backendStyle
         Repos["💾 Repository Layer<br/>(Spring Data JPA with Pessimistic Locking)"]:::backendStyle
     end
 
-    subgraph Database["PostgreSQL 18 Relational Database"]
+    subgraph Database["PostgreSQL 16 / 18 Relational Database (Flyway Migrations V1-V3)"]
         Users[("👥 users<br/>(ID, Email, BCrypt Hash, Role)")]:::dbStyle
-        Students[("🎓 student_profiles<br/>(Student ID, Grade, Points)")]:::dbStyle
+        Students[("🎓 student_profiles<br/>(Student ID, Grade, Total Points)")]:::dbStyle
         Teachers[("👨‍🏫 teacher_profiles<br/>(Employee ID, Department)")]:::dbStyle
         Points[("📜 point_transactions<br/>(Student FK, Teacher FK, Delta, Reason)")]:::dbStyle
+        Classes[("🏫 classes & class_enrollments<br/>(Teacher FK, Code, Student FK)")]:::dbStyle
+        Quizzes[("📝 quizzes, quiz_questions & quiz_submissions<br/>(Class FK, Points, Score, Timestamp)")]:::dbStyle
     end
 
     User -->|"Interacts with Screen"| UI
@@ -54,3 +56,5 @@ flowchart TD
     Repos -->|"Pessimistic Write Row Locking"| Students
     Repos -->|"Faculty Profile Association"| Teachers
     Repos -->|"Immutable Point Audit Ledger"| Points
+    Repos -->|"Class Management & Enrollment"| Classes
+    Repos -->|"Assessments & Auto-Graded Submissions"| Quizzes

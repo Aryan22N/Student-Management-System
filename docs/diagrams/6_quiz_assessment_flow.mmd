@@ -1,0 +1,58 @@
+flowchart TD
+    classDef clientStyle fill:#e6f4ea,stroke:#0f9d58,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef backendStyle fill:#e8f0fe,stroke:#1a73e8,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef decisionStyle fill:#fef7e0,stroke:#f9ab00,stroke-width:2px,color:#202124,rx:6,ry:6
+    classDef errorStyle fill:#fce8e6,stroke:#d93025,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef successStyle fill:#ceead6,stroke:#137333,stroke-width:2px,color:#202124,rx:8,ry:8
+    classDef actorStyle fill:#f8f9fa,stroke:#5f6368,stroke-width:2px,color:#202124,rx:20,ry:20
+
+    Teacher(["👨‍🏫 Faculty Member"]):::actorStyle
+    Student(["🎓 Student"]):::actorStyle
+
+    %% Teacher Quiz Authoring
+    TCreate["📱 Faculty Classroom Tab:<br/>Author Quiz (Title, Point Value, Questions & Options)"]:::clientStyle
+    TCtrl["🎮 QuizController.createQuiz()<br/>POST /api/v1/classes/{id}/quizzes"]:::backendStyle
+    TSvc["⚙️ QuizServiceImpl.createQuiz()<br/>(Persists Quiz & Questions to Database)"]:::backendStyle
+
+    %% Student Taking Quiz
+    SFeed["📱 Student Classwork Stream:<br/>View Assigned Quiz Card"]:::clientStyle
+    STake["📱 QuizAssessmentScreen:<br/>Answer Multiple Choice Questions"]:::clientStyle
+    SSubmit["🌐 Axios: POST /api/v1/quizzes/{id}/submit<br/>(Payload: Question IDs + Selected Options)"]:::clientStyle
+    
+    QCtrl["🎮 QuizController.submitQuiz()"]:::backendStyle
+    QSvc["⚙️ QuizServiceImpl.submitQuiz()<br/>1. Evaluate Answers against Key<br/>2. Calculate Percentage & Score"]:::backendStyle
+    
+    AlreadyTaken{"Already<br/>Submitted?"}:::decisionStyle
+    DupErr["❌ HTTP 400 Bad Request<br/>(Quiz already submitted)"]:::errorStyle
+
+    subgraph AutoAward["🏆 Automated Merit Award & Dynamic Ranking"]
+        Lock["🔐 Pessimistic Lock Student Record<br/>(SELECT ... FOR UPDATE)"]:::backendStyle
+        RecordTx["📜 Insert point_transactions:<br/>Reason: 'Quiz Completed: {QuizName} (Score: X/Y, +Z pts)'"]:::backendStyle
+        UpdatePoints["💾 Update student_profiles.total_points<br/>(Add Merit Points Earned)"]:::backendStyle
+        SaveSub["💾 Save quiz_submissions record"]:::backendStyle
+    end
+
+    Response["📤 HTTP 200 OK<br/>(Score, Earned Points, Total Merit)"]:::successStyle
+    ReduxUpdate["⚡ Redux: Invalidate & Refresh Leaderboard<br/>(Dynamic Rank Re-calculation)"]:::clientStyle
+    UIResult["🎉 UI: Score Summary & Rank Update Celebration"]:::successStyle
+
+    Teacher --> TCreate
+    TCreate --> TCtrl
+    TCtrl --> TSvc
+
+    TSvc -.->|"Published to Class"| SFeed
+    Student --> SFeed
+    SFeed --> STake
+    STake --> SSubmit
+    SSubmit --> QCtrl
+    QCtrl --> QSvc
+    QSvc --> AlreadyTaken
+    AlreadyTaken -- "Yes" --> DupErr
+    AlreadyTaken -- "No" --> Lock
+    Lock --> RecordTx
+    RecordTx --> UpdatePoints
+    UpdatePoints --> SaveSub
+    SaveSub --> Response
+    Response --> ReduxUpdate
+    ReduxUpdate --> UIResult
+

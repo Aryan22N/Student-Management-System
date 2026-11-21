@@ -17,7 +17,10 @@ An end-to-end academic merit, evaluation, and student management platform featur
    - [Server-Side Pagination & Sorting](#42-server-side-pagination--sorting)
    - [REST API Design & Endpoints](#43-rest-api-design--endpoints)
    - [Validation & Centralized Exception Handling](#44-validation--centralized-exception-handling)
-5. [User Interface Design (Google Classroom Theme)](#5-user-interface-design-google-classroom-theme)
+5. [User Interface Design & Role-Based Dashboards](#5-user-interface-design--role-based-dashboards)
+   - [Student Workspace & Dashboard](#51-student-workspace--dashboard)
+   - [Faculty & Teacher Dashboard](#52-faculty--teacher-dashboard)
+   - [Design System & Google Classroom Theming](#53-design-system--google-classroom-theming)
 6. [Project Structure](#6-project-structure)
 7. [Setup & Execution Instructions](#7-setup--execution-instructions)
    - [Method A: Running via Docker Compose (Recommended)](#method-a-running-via-docker-compose-recommended)
@@ -121,14 +124,14 @@ The **Student Management System** is designed to manage student academic perform
    - Credentials verified against PostgreSQL using BCrypt password hashing.
    - On success, the backend returns a signed HMAC-SHA256 JWT payload containing user profile data and designated role (`STUDENT` or `TEACHER`).
 3. **Role-Segregated Interfaces & Protected Flows**:
-   - `STUDENT`: Read-only access to merit totals, peer standings, classwork stream, and personal dossier.
+   - `STUDENT`: Read-only access to merit totals, peer standings, classwork stream, and personal student profile.
    - `TEACHER`: Administrative access to directory, point awards, quiz generation, and classroom management.
    - Unauthorized attempts return `401 Unauthorized` or `403 Forbidden`.
 4. **Deep-Linked Routing**:
    - Deep-linked routes synchronized with browser history and navigation state:
      - `/login`, `/register`
      - `/faculty-dashboard`, `/student-directory`, `/award-points`, `/rank-standings`, `/preferences`
-     - `/dashboard`, `/merit-ledger`, `/student-dossier`
+     - `/dashboard`, `/merit-ledger`, `/student-profile`
 
 ### 3.2 Frontend State Architecture, Redux & Providers
 
@@ -216,7 +219,7 @@ All endpoints follow RESTful conventions, prefixed with `/api/v1`:
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/v1/students` | `TEACHER` only | Paginated search of all student profiles |
-| `GET` | `/api/v1/students/{id}` | `TEACHER` or Owner | Retrieve student dossier details |
+| `GET` | `/api/v1/students/{id}` | `TEACHER` or Owner | Retrieve student profile details |
 | `GET` | `/api/v1/students/me/profile` | `STUDENT` only | Retrieve personal student profile |
 | `GET` | `/api/v1/students/{id}/transactions` | `TEACHER` or Owner | Retrieve paginated merit transaction history |
 
@@ -282,7 +285,7 @@ The UI adheres to the **Google Classroom visual language**:
   - Typography: Clean Google-style typography (`#202124` text color)
 - **Classroom Card Grid**:
   - Responsive multi-column grid adapting from single-column mobile view to multi-card laptop desktop layouts.
-  - Deep-green card headers with `ENROLLED` badges, circular teacher initials, 3-dots context menus, and quick-action footers (Folder, Standings, Dossier).
+  - Deep-green card headers with `ENROLLED` badges, circular teacher initials, 3-dots context menus, and quick-action footers (Folder, Standings, Profile).
 - **Classwork & Merit Stream**:
   - Filterable stream with active tab underline indicators (`All Activity`, `Quizzes`, `Merit Ledger`).
   - Color-coded activity items showing exact awarded points (`+10 pts`, `+60 pts`) and quiz submission status (`Graded 5/5`, `Take Quiz`).

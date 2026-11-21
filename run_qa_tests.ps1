@@ -327,7 +327,7 @@ Invoke-RestMethod -Uri "$BaseUrl/points/award" -Method Post -ContentType "applic
 Invoke-RestMethod -Uri "$BaseUrl/points/award" -Method Post -ContentType "application/json" -Headers $teacherHeaders -Body $awardC | Out-Null
 
 # Verify Leaderboard Rankings
-$lb = Invoke-RestMethod -Uri "$BaseUrl/leaderboard?page=0&size=20" -Method Get -Headers $studentHeaders
+$lb = Invoke-RestMethod -Uri "$BaseUrl/leaderboard?page=0&size=100" -Method Get -Headers $studentHeaders
 $entryB = $lb.data.content | Where-Object { $_.studentId -eq $stuBId }
 $entryC = $lb.data.content | Where-Object { $_.studentId -eq $stuCId }
 $entryA = $lb.data.content | Where-Object { $_.studentId -eq $stuAId }
@@ -335,13 +335,13 @@ $entryA = $lb.data.content | Where-Object { $_.studentId -eq $stuAId }
 Assert-Step ($entryB.rank -eq $entryC.rank) "Tied scores (150 pts) share the exact same rank position ($($entryB.rank))"
 Assert-Step ($entryA.rank -gt $entryB.rank) "Lower score (90 pts) receives lower rank ($($entryA.rank))"
 
-# Re-ordering test: Award Elena (Student A) +500 points
-$awardExtra = @{ studentId = $stuAId; points = 500; transactionType = "ACADEMIC"; reason = "Grand Prize Award" } | ConvertTo-Json
+# Re-ordering test: Award Elena (Student A) +1000 points
+$awardExtra = @{ studentId = $stuAId; points = 1000; transactionType = "ACADEMIC"; reason = "Grand Prize Award" } | ConvertTo-Json
 Invoke-RestMethod -Uri "$BaseUrl/points/award" -Method Post -ContentType "application/json" -Headers $teacherHeaders -Body $awardExtra | Out-Null
 
-$lbUpdated = Invoke-RestMethod -Uri "$BaseUrl/leaderboard?page=0&size=20" -Method Get -Headers $studentHeaders
+$lbUpdated = Invoke-RestMethod -Uri "$BaseUrl/leaderboard?page=0&size=100" -Method Get -Headers $studentHeaders
 $entryANew = $lbUpdated.data.content | Where-Object { $_.studentId -eq $stuAId }
-Assert-Step ($entryANew.totalPoints -eq 590 -and $entryANew.rank -eq 1) "Dynamic re-ordering: Elena promoted to Rank 1 with 590 points"
+Assert-Step ($entryANew.totalPoints -eq 1090 -and $entryANew.rank -eq 1) "Dynamic re-ordering: Elena promoted to Rank 1 with 1090 points"
 
 Write-Host "`n==========================================================" -ForegroundColor Cyan
 Write-Host " TEST RUN COMPLETE: $passCount Passed, $failCount Failed (100% Success)" -ForegroundColor Green

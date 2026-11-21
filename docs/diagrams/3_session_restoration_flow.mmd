@@ -32,8 +32,8 @@ flowchart TD
     ReduxHydrate["⚡ Redux authSlice Hydration:<br/>• state.user = payload.user<br/>• state.studentProfile = ...<br/>• state.teacherProfile = ...<br/>• state.isAuthenticated = true<br/>• state.isRestoringAuth = false"]:::successStyle
 
     RoleRouter{"User Role?"}:::decisionStyle
-    StudentNav["🎓 StudentNavigator<br/>(Dashboard, Leaderboard, History, Profile)"]:::successStyle
-    TeacherNav["👨‍🏫 TeacherNavigator<br/>(Dashboard, Directory, Award, Dossier)"]:::successStyle
+    StudentNav["🎓 StudentNavigator<br/>(Dashboard, Leaderboard, History, Student Profile)"]:::successStyle
+    TeacherNav["👨‍🏫 TeacherNavigator<br/>(Dashboard, Directory, Award, Student Profile)"]:::successStyle
 
     Start --> Splash
     Splash --> Thunk

@@ -89,7 +89,7 @@ export const studentLinking: LinkingOptions<any> = {
     screens: {
       StudentDashboard: 'dashboard',
       PointHistory: 'merit-ledger',
-      StudentProfile: 'student-dossier',
+      StudentProfile: 'student-profile',
       Leaderboard: 'rank-standings',
       Settings: 'preferences',
     },
@@ -99,8 +99,8 @@ export const studentLinking: LinkingOptions<any> = {
     const query = path.includes('?') ? '?' + path.split('?')[1] : '';
     if (clean === '/' || clean === '' || clean === '/login') {
       clean = '/dashboard';
-    } else if (clean === '/profile' || clean === '/dossier') {
-      clean = '/student-dossier';
+    } else if (clean === '/profile' || clean === '/dossier' || clean === '/student-dossier') {
+      clean = '/student-profile';
     } else if (clean === '/merits' || clean === '/history') {
       clean = '/merit-ledger';
     } else if (clean === '/leaderboard' || clean === '/ranks') {
